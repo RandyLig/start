@@ -1,23 +1,29 @@
 <template>
   <div class="foods">
+    <!-- 商品列表-->
     <div class="menu-wrapper" ref="menuwrapper">
       <ul>
         <li v-for="(item,index) in goods" class="menu-item"
-            :class="{'current':currentIndex===index}" @click="selectMenu(index,$event)">
+            v-bind:class="{'current':currentIndex===index}" @click="selectMenu(index,$event)">
           <span class="text">
+            <!--判断是否有图标，有则显示-->
             <span v-show="item.type>0" class="icon"
-                  :class="classMap[item.type]"></span>{{item.name}}
+                  :class="classMap[item.type]">
+            </span>
+            <span>{{item.name}}</span>
           </span>
         </li>
       </ul>
     </div>
+    <!--具体食物列表-->
     <div class="foods-wrapper" ref="foodswrapper">
       <ul>
         <li v-for="item in goods" class="food-list food-list-hook">
           <h1 class="title">{{item.name}}</h1>
           <ul>
-            <li v-for="food in item.foods" class="foods-item border-1px">
-              <div class="icon">
+            <!-- 为商品详情页绑定click事件 -->
+            <li v-for="food in item.foods" class="foods-item border-1px" >
+              <div class="icon" @click="selectFood(food, $event)">
                 <img :src="food.icon" height="57" width="57">
               </div>
               <div class="content">
@@ -41,7 +47,9 @@
       </ul>
     </div>
     <shopcart ref="shopcart" :select-foods="selectFoods" :delivery-price="seller.deliveryPrice"
-              :min-price="seller.minPrice"></shopcart>
+              :min-price="seller.minPrice">
+    </shopcart>
+    <food :food="selectedFood" ref="food"></food>
   </div>
 </template>
 
@@ -49,6 +57,7 @@
   import BScroll from 'better-scroll';
   import shopcart from '../../components/shopcart/shopcart.vue';
   import cartcontrol from '../../components/cartcontrol/cartcontrol.vue';
+  import food from '../../components/food/food.vue';
   const ERR_OK = 0;
   export default{
     props: {
@@ -60,7 +69,8 @@
       return {
         goods: [],
         listHeight: [],            // 右侧高度
-        scrollY: 0              // 左侧高度
+        scrollY: 0,              // 左侧高度
+        selectedFood: {}
       };
     },
     computed: {
@@ -109,6 +119,13 @@
         this.foodsScroll.scrollToElement(el, 300);
         console.log(index);
       },
+      selectFood (food, event) {
+        if (!event._constructed) {
+          return;
+        }
+        this.selectedFood = food;
+        this.$refs.food.show();
+      },
       _initScroll () {
         this.menuScroll = new BScroll(this.$refs.menuwrapper, {
           click: true
@@ -137,7 +154,8 @@
     },
     components: {
       shopcart,
-      cartcontrol
+      cartcontrol,
+      food
     },
     events: {
       'cart.add' (target) {

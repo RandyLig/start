@@ -106,7 +106,7 @@
     .content-wrapper
       position: relative
       padding: 24px 12px 18px 24px
-      font-size: 0px
+      font-size: 0
       .avatar
         display: inline-block
         vertical-align: top
