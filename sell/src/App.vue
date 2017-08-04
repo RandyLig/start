@@ -15,7 +15,10 @@
       </div>
 
     </div>
-    <router-view :seller="seller"><</router-view>
+    <!--让组件内容存到内存中去，不再重新渲染DOM-->
+    <keep-alive>
+    <router-view :seller="seller"></router-view>
+    </keep-alive>
   </div>
 </template>
 <script type="text/ecmascript-6">
